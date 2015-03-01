@@ -58,85 +58,13 @@
 				return true;
 			}
 		},
-		mailru: {
-			counterUrl: protocol + '//connect.mail.ru/share_count?url_list={url}&callback=1&func=?',
-			convertNumber: function(data) {
-				for (var url in data) {
-					if (data.hasOwnProperty(url)) {
-						return data[url].shares;
-					}
-				}
-			},
-			popupUrl: protocol + '//connect.mail.ru/share?share_url={url}&title={title}',
-			popupWidth: 550,
-			popupHeight: 360
-		},
-		vkontakte: {
-			counterUrl: 'https://vk.com/share.php?act=count&url={url}&index={index}',
-			counter: function(jsonUrl, deferred) {
-				var options = services.vkontakte;
-				if (!options._) {
-					options._ = [];
-					if (!window.VK) window.VK = {};
-					window.VK.Share = {
-						count: function(idx, number) {
-							options._[idx].resolve(number);
-						}
-					};
-				}
-
-				var index = options._.length;
-				options._.push(deferred);
-				$.getScript(makeUrl(jsonUrl, {index: index}))
-					.fail(deferred.reject);
-			},
-			popupUrl: protocol + '//vk.com/share.php?url={url}&title={title}',
-			popupWidth: 550,
-			popupHeight: 330
-		},
-		odnoklassniki: {
-			counterUrl: 'https://share.yandex.net/counter/odnoklassniki/?url={url}',
-			counter: function(jsonUrl, deferred) {
-				var options = services.odnoklassniki;
-				if (options._) {
-					// Reject all counters except the first because this counter doesn’t neither return URL nor accept callback
-					deferred.reject();
-					return;
-				}
-
-				if (!window.ODKL) window.ODKL = {};
-				window.ODKL.updateCount = function(idx, number) {
-					deferred.resolve(number);
-				};
-
-				options._ = deferred;
-				$.getScript(makeUrl(jsonUrl))
-					.fail(deferred.reject);
-			},
-			popupUrl: 'http://connect.ok.ru/dk?st.cmd=WidgetSharePreview&service=odnoklassniki&st.shareUrl={url}',
-			popupWidth: 550,
-			popupHeight: 360
-		},
 		plusone: {
-			counterUrl: 'https://share.yandex.net/counter/gpp/?url={url}&callback=?',
 			convertNumber: function(number) {
-				if (typeof number === 'string') {
-					number = number.replace(/\D/g, '');
-				}
-				return parseInt(number, 10);
+				return 0;
 			},
 			popupUrl: 'https://plus.google.com/share?url={url}',
 			popupWidth: 700,
 			popupHeight: 500
-		},
-		pinterest: {
-			counterUrl: protocol + '//api.pinterest.com/v1/urls/count.json?url={url}&callback=?',
-			convertNumber: function(data) {
-				return data.count;
-			},
-			popupUrl: protocol + '//pinterest.com/pin/create/button/?url={url}&description={title}',
-			popupWidth: 630,
-			popupHeight: 270
 		}
 	};
 
